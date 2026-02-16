@@ -109,6 +109,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --no-frozen-lockfile
 
+      - name: Ensure tailwindcss cli exists
+        run: pnpm -w add -D tailwindcss
+
       - name: Build project
         run: |
           pnpm -w build
