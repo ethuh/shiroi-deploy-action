@@ -97,6 +97,15 @@ jobs:
 
       - uses: jongwooo/next-cache@v1
 
+      - name: Debug: list root files
+        run: |
+          pwd
+          ls -la
+          echo "---- scripts ----"
+          find . -maxdepth 4 -type f -name "*.sh" -print
+          echo "---- package scripts ----"
+          node -p "require('./package.json').scripts || {}"
+
       - name: Install dependencies
         run: pnpm install --no-frozen-lockfile
 
