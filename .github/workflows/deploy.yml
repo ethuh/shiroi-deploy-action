@@ -109,26 +109,28 @@ jobs:
       - name: Install dependencies
         run: pnpm install --no-frozen-lockfile
 
-      - name: Install tailwind in apps/web (force)
+      - name: Install Tailwind CLI in apps/web (v3)
         run: |
           cd apps/web
-          pnpm add -D tailwindcss@4.1.18 @tailwindcss/postcss@4.1.18 postcss@8
+          pnpm add -D tailwindcss@3.4.17 postcss@8 autoprefixer@10
 
-      - name: Verify tailwindcss is resolvable in apps/web
+      - name: Verify Tailwind CLI
         run: |
           cd apps/web
-          pnpm exec tailwindcss -v
-          ls -la node_modules/.bin | grep tailwind || true
+          ./node_modules/.bin/tailwindcss -v
+          ls -la node_modules/.bin | grep tailwind
 
-      - name: Patch shiro-types build to call tailwind via apps/web bin
+      - name: Patch shiro-types build to use apps/web tailwind binary
         run: |
           node -e "
           const fs=require('fs');
           const p='packages/types/package.json';
           const j=JSON.parse(fs.readFileSync(p,'utf8'));
-          if(!j.scripts?.build){ process.exit(0); }
-          j.scripts.build = j.scripts.build.replace(/pnpm exec tailwindcss/g,'../../apps/web/node_modules/.bin/tailwindcss');
-          j.scripts.build = j.scripts.build.replace(/\btailwindcss\b/g,'../../apps/web/node_modules/.bin/tailwindcss');
+          if(!j.scripts?.build){ console.log('No build script to patch'); process.exit(0); }
+          const bin='../../apps/web/node_modules/.bin/tailwindcss';
+          j.scripts.build = j.scripts.build
+            .replace(/pnpm exec tailwindcss/g, bin)
+            .replace(/\btailwindcss\b/g, bin);
           fs.writeFileSync(p, JSON.stringify(j, null, 2));
           console.log('Patched build script:', j.scripts.build);
           "
@@ -137,7 +139,7 @@ jobs:
         run: |
           pnpm -w build
           sh ./apps/web/standalone-bundle.sh
-          ls -la assets
+          ls -la assets || true
           test -f assets/release.zip
 
 
