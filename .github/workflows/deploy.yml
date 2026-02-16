@@ -111,7 +111,10 @@ jobs:
 
       - name: Build project
         run: |
-          sh ./ci-release-build.sh
+          pnpm -w build
+          sh ./apps/web/standalone-bundle.sh
+          ls -la assets
+          test -f assets/release.zip
 
       - name: Cache Build Artifacts
         id: cache-primes
