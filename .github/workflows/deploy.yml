@@ -137,6 +137,20 @@ jobs:
           fs.writeFileSync(p, JSON.stringify(j, null, 2));
           console.log('Patched build script:', j.scripts.build);
           "
+      - name: Hotfix tailwind max-w-screen
+        run: |
+          FILE="apps/web/src/styles/tailwindcss.css"
+          if [ -f "$FILE" ]; then
+            # 文件里用到了 max-w-screen，但没定义时，追加一个自定义 utility
+            if grep -q "\bmax-w-screen\b" "$FILE" && ! grep -q "\.max-w-screen" "$FILE"; then
+              cat >> "$FILE" <<'EOF'
+
+              @layer utilities {
+                .max-w-screen { max-width: 100vw; }
+              }
+              EOF
+                          fi
+                        fi
 
       - name: Build project
         run: |
