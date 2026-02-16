@@ -97,7 +97,7 @@ jobs:
 
       - uses: jongwooo/next-cache@v1
 
-      - name: Debug: list root files
+      - name: "Debug: list root files"
         run: |
           pwd
           ls -la
