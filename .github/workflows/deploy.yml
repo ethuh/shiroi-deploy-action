@@ -141,17 +141,11 @@ jobs:
         run: |
           FILE="apps/web/src/styles/tailwindcss.css"
           if [ -f "$FILE" ]; then
-            # 文件里用到了 max-w-screen，但没定义时，追加一个自定义 utility
-            if grep -q "\bmax-w-screen\b" "$FILE" && ! grep -q "\.max-w-screen" "$FILE"; then
-              cat >> "$FILE" <<'EOF'
-
-              @layer utilities {
-                .max-w-screen { max-width: 100vw; }
-              }
-              EOF
-                          fi
-                        fi
-
+            if grep -q "max-w-screen" "$FILE" && ! grep -q "\.max-w-screen" "$FILE"; then
+              printf '\n@layer utilities {\n  .max-w-screen { max-width: 100vw; }\n}\n' >> "$FILE"
+            fi
+          fi
+          
       - name: Build project
         run: |
           pnpm -w build
