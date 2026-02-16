@@ -109,8 +109,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install --no-frozen-lockfile
 
-      - name: Ensure tailwindcss cli exists
-        run: pnpm -w add -D tailwindcss
+      - name: Ensure tailwindcss exists for packages/types
+        run: pnpm --filter ./packages/types add -D tailwindcss@3.4.17
 
       - name: Patch tailwindcss command for turbo
         run: |
