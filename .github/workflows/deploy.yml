@@ -117,8 +117,9 @@ jobs:
       - name: Verify Tailwind CLI
         run: |
           cd apps/web
-          ./node_modules/.bin/tailwindcss -v
+          ./node_modules/.bin/tailwindcss --version
           ls -la node_modules/.bin | grep tailwind
+
 
       - name: Patch shiro-types build to use apps/web tailwind binary
         run: |
