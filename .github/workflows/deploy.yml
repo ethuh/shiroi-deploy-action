@@ -108,10 +108,10 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --no-frozen-lockfile
-
-      - name: Ensure tailwind v4 cli exists for packages/types
-        run: pnpm --filter ./packages/types add -D tailwindcss@4.1.18 @tailwindcss/postcss@4.1.18 postcss@8
-
+      
+      - name: Ensure tailwind v4 exists for apps/web
+        run: pnpm --filter ./apps/web add -D tailwindcss@4.1.18 @tailwindcss/postcss@4.1.18 postcss@8
+      
       - name: Patch tailwindcss command for turbo
         run: |
           node -e "
@@ -123,14 +123,14 @@ jobs:
             fs.writeFileSync(p, JSON.stringify(j, null, 2));
             console.log('Patched:', j.scripts.build);
           }"
-
+      
       - name: Build project
         run: |
           pnpm -w build
           sh ./apps/web/standalone-bundle.sh
           ls -la assets
           test -f assets/release.zip
-          
+
       - name: Cache Build Artifacts
         id: cache-primes
         uses: actions/cache/save@v4
