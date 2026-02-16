@@ -112,13 +112,25 @@ jobs:
       - name: Ensure tailwindcss cli exists
         run: pnpm -w add -D tailwindcss
 
+      - name: Patch tailwindcss command for turbo
+        run: |
+          node -e "
+          const fs=require('fs');
+          const p='packages/types/package.json';
+          const j=JSON.parse(fs.readFileSync(p,'utf8'));
+          if(j.scripts?.build){
+            j.scripts.build = j.scripts.build.replace(/\btailwindcss\b/g,'pnpm exec tailwindcss');
+            fs.writeFileSync(p, JSON.stringify(j, null, 2));
+            console.log('Patched:', j.scripts.build);
+          }"
+
       - name: Build project
         run: |
           pnpm -w build
           sh ./apps/web/standalone-bundle.sh
           ls -la assets
           test -f assets/release.zip
-
+          
       - name: Cache Build Artifacts
         id: cache-primes
         uses: actions/cache/save@v4
